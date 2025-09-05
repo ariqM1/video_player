@@ -7,6 +7,8 @@ export interface Video {
 	category: string;
 	description: string;
 	duration: string;
+	releaseDate?: string;
+	director?: string;
 }
 
 export interface CategoryWithVideos {

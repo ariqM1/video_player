@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import VideoCard from "@/components/VideoCard";
+import VideoCardSkeleton from "@/components/VideoCardSkeleton";
 import { searchVideos, Video } from "@/lib/api-client";
 import { Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -94,15 +95,10 @@ export default function SearchPage() {
 					</div>
 
 					{isLoading ? (
-						<div className="animate-pulse">
-							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-								{[...Array(8)].map((_, i) => (
-									<div key={i} className="space-y-2">
-										<div className="aspect-video bg-muted rounded"></div>
-										<div className="h-4 bg-muted rounded w-3/4"></div>
-									</div>
-								))}
-							</div>
+						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+							{[...Array(8)].map((_, i) => (
+								<VideoCardSkeleton key={i} />
+							))}
 						</div>
 					) : searchResults.length > 0 ? (
 						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
