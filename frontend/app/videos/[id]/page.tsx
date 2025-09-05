@@ -2,10 +2,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getVideoById } from "@/lib/api-client";
-import { ArrowLeft, Play } from "lucide-react";
-import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import VideoPlayer from "@/components/VideoPlayer";
 
 interface VideoPageProps {
 	params: {
@@ -32,28 +32,10 @@ export default async function VideoPage({ params }: VideoPageProps) {
 				</Link>
 
 				<div className="grid gap-6 md:gap-8 lg:grid-cols-2 xl:gap-12">
-					<div className="relative aspect-video overflow-hidden rounded-lg bg-muted shadow-xl">
-						<Image
-							src={video.thumbnail}
-							alt={video.title}
-							fill
-							className="object-cover"
-							priority
-							placeholder="blur"
-							blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-							sizes="(max-width: 1024px) 100vw, 50vw"
-						/>
-						<div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/60 via-black/30 to-transparent">
-							<Button 
-								size="lg" 
-								className="gap-2 shadow-lg transition-transform hover:scale-105"
-							>
-								<Play className="h-5 w-5" fill="currentColor" />
-								<span className="hidden sm:inline">Play Video</span>
-								<span className="sm:hidden">Play</span>
-							</Button>
-						</div>
-					</div>
+					<VideoPlayer 
+						thumbnail={video.thumbnail}
+						title={video.title}
+					/>
 
 					<div className="space-y-4 md:space-y-6">
 						<div>
@@ -99,6 +81,24 @@ export default async function VideoPage({ params }: VideoPageProps) {
 											</dt>
 											<dd className="font-medium">
 												{video.director}
+											</dd>
+										</div>
+									)}
+									{video.cast && video.cast.length > 0 && (
+										<div>
+											<dt className="mb-2 text-muted-foreground">
+												Cast
+											</dt>
+											<dd className="flex flex-wrap gap-2">
+												{video.cast.map((actor, index) => (
+													<Badge 
+														key={index} 
+														variant="outline" 
+														className="px-2 py-1 text-xs"
+													>
+														{actor}
+													</Badge>
+												))}
 											</dd>
 										</div>
 									)}

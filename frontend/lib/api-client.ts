@@ -9,6 +9,7 @@ export interface Video {
 	duration: string;
 	releaseDate?: string;
 	director?: string;
+	cast?: string[];
 }
 
 export interface CategoryWithVideos {
@@ -130,6 +131,7 @@ export async function searchVideos(query: string): Promise<Video[]> {
 		(video) =>
 			video.title.toLowerCase().includes(searchTerm) ||
 			video.description.toLowerCase().includes(searchTerm) ||
-			video.category.toLowerCase().includes(searchTerm)
+			video.category.toLowerCase().includes(searchTerm) ||
+			(video.cast && video.cast.some(actor => actor.toLowerCase().includes(searchTerm)))
 	);
 }
