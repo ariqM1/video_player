@@ -4,7 +4,7 @@ import { Video } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 interface SearchDropdownProps {
 	suggestions: Video[];
@@ -12,7 +12,6 @@ interface SearchDropdownProps {
 	onItemClick: (video: Video) => void;
 	selectedIndex: number;
 }
-
 
 export function SearchDropdown({
 	suggestions,

@@ -1,14 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/Pagination";
+import { Button } from "@/components/ui/button";
 import VideoCard from "@/components/VideoCard";
 import VideoCardSkeleton from "@/components/VideoCardSkeleton";
 import { searchVideos, Video } from "@/lib/api-client";
-import { Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function SearchPage() {
 	const searchParams = useSearchParams();
@@ -32,6 +30,17 @@ export default function SearchPage() {
 	const endIndex = startIndex + ITEMS_PER_PAGE;
 	const paginatedResults = searchResults.slice(startIndex, endIndex);
 
+	const updateURLWithPage = useCallback((page: number) => {
+		const params = new URLSearchParams();
+		if (queryParam) params.set("q", queryParam);
+		if (page > 1) params.set("page", page.toString());
+
+		const newURL = `/search${
+			params.toString() ? `?${params.toString()}` : ""
+		}`;
+		router.push(newURL);
+	}, [queryParam, router]);
+
 	useEffect(() => {
 		setSearchQuery(queryParam);
 		setCurrentPage(Math.max(1, pageParam));
@@ -50,9 +59,11 @@ export default function SearchPage() {
 				setError(null);
 				const results = await searchVideos(queryParam);
 				setSearchResults(results);
-				
+
 				// Reset to page 1 if current page exceeds total pages
-				const newTotalPages = Math.ceil(results.length / ITEMS_PER_PAGE);
+				const newTotalPages = Math.ceil(
+					results.length / ITEMS_PER_PAGE
+				);
 				if (pageParam > newTotalPages && newTotalPages > 0) {
 					updateURLWithPage(1);
 				}
@@ -69,35 +80,13 @@ export default function SearchPage() {
 		}
 
 		performSearch();
-	}, [queryParam]);
-
-	const updateURLWithPage = (page: number) => {
-		const params = new URLSearchParams();
-		if (queryParam) params.set("q", queryParam);
-		if (page > 1) params.set("page", page.toString());
-		
-		const newURL = `/search${params.toString() ? `?${params.toString()}` : ""}`;
-		router.push(newURL);
-	};
+	}, [queryParam, pageParam, updateURLWithPage]);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
 		updateURLWithPage(page);
 	};
 
-	const handleSearch = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (searchQuery.trim()) {
-			const params = new URLSearchParams();
-			params.set("q", searchQuery.trim());
-			router.push(`/search?${params.toString()}`);
-		}
-	};
-
-	const clearSearch = () => {
-		setSearchQuery("");
-		router.push("/search");
-	};
 
 	if (error) {
 		return (
@@ -120,18 +109,24 @@ export default function SearchPage() {
 				<div>
 					<div className="mb-6">
 						<h2 className="text-xl font-semibold">
-							Search results for "{searchQuery}"
+							Search results for &ldquo;{searchQuery}&rdquo;
 						</h2>
 						{!isLoading && searchResults.length > 0 && (
 							<div className="text-muted-foreground space-y-1">
 								<p>
 									{searchResults.length} video
-									{searchResults.length !== 1 ? "s" : ""} found
+									{searchResults.length !== 1 ? "s" : ""}{" "}
+									found
 								</p>
 								{totalPages > 1 && (
 									<p>
-										Showing {startIndex + 1} - {Math.min(endIndex, searchResults.length)} of {searchResults.length} results
-										(Page {currentPage} of {totalPages})
+										Showing {startIndex + 1} -{" "}
+										{Math.min(
+											endIndex,
+											searchResults.length
+										)}{" "}
+										of {searchResults.length} results (Page{" "}
+										{currentPage} of {totalPages})
 									</p>
 								)}
 							</div>
@@ -157,7 +152,7 @@ export default function SearchPage() {
 									/>
 								))}
 							</div>
-							
+
 							{totalPages > 1 && (
 								<Pagination
 									currentPage={currentPage}
