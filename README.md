@@ -19,7 +19,7 @@ A full-stack web application for searching and streaming videos. Built with Reac
 1. **Clone the repository**
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/ariqM1/video_player.git
     cd video_player
     ```
 
